@@ -1,76 +1,81 @@
 class_name Ball
-extends RigidBody2D
+extends CharacterBody2D
 
 signal leftWallSignal
 signal rightWallSignal
 
 @export var speed : int
+var newSpeed : int
+@export var accel : int = 25
 @export var possibleDirections := []
 
-var canCollide := true
-var startPos 
+const MAX_Y_VECTOR : float = 0.9
 
-var velocity : Vector2
+var startPos
+var direction
+var canStart : bool
 
 func _ready() -> void:
 	randomize()
+	canStart = false
 	hide()
 	
 
 func start(pos):
 	randomSpeed()
+	newSpeed = speed
 	position = pos
-	startPos = position
+	startPos = pos
+	canStart = true
 	show()
 
-func _on_up_wall_body_entered(body: Node2D) -> void:
-	if canCollide:
-		velocity.y *= -1
-		velocity.normalized()
-		linear_velocity = velocity
+func newBall():
+	newSpeed = speed
+	position = startPos
+	randomSpeed()
 
-
-func _on_down_wall_body_entered(body: Node2D) -> void:
-	if canCollide:
-		velocity.y *= -1
-		velocity.normalized()
-		linear_velocity = velocity
-		print(velocity)
-
-
-func _on_left_wall_body_entered(body: Node2D) -> void:
-	if canCollide:
-		print("colidiu na esquerda")
-		leftWallSignal.emit()
-		linear_velocity = Vector2.ZERO
-		position = startPos
-		canCollide = false
-		
-	
-
-func _on_right_wall_body_entered(body: Node2D) -> void:
-	if canCollide:
-		rightWallSignal.emit()
-		linear_velocity = Vector2.ZERO
-		position = startPos
-		canCollide = false
-		
-
-func _on_player_body_entered(body: Node2D) -> void:
-	velocity.x *= -1
-	velocity.normalized()
-	linear_velocity = velocity
-
-
-func _on_machine_body_entered(body: Node2D) -> void:
-	velocity.x *= -1
-	velocity.normalized()
-	linear_velocity = velocity
-	
 func randomSpeed():
-	velocity = possibleDirections[randi() % possibleDirections.size()]
-	velocity *= speed
-	velocity.normalized()
-	linear_velocity = velocity
+	if possibleDirections.size() == 0:
+		assert(false, "No possible directions")
+	direction = possibleDirections[randi() % possibleDirections.size()]
 	
+	direction.normalized()
+
+func _physics_process(delta: float) -> void:
+	if !canStart:
+		return
+	var collision = move_and_collide(direction * newSpeed * delta)
+	var collider
+	if collision:
+		collider = collision.get_collider()
+		if collider.is_in_group("Player") or collider.is_in_group("Machine"):
+			newSpeed += accel
+			direction = new_direction(collider)
+		
+		elif collider.is_in_group("Wall"):
+			direction = direction.bounce(collision.get_normal())
+
+
+func new_direction(collider):
+	var ball_y = position.y
+	var pad_y = collider.position.y
+	var dist = ball_y - pad_y
+	var newDir := Vector2()
 	
+	if direction.x > 0 and !(dist > collider.object_size.y / 2):
+		newDir.x = -1
+	else:
+		newDir.x = 1
+		
+	newDir.y = (dist / (collider.object_size.y / 2)) * MAX_Y_VECTOR * 1.2
+	
+	return newDir.normalized()
+
+
+func _on_warner_left_body_entered(body: Node2D) -> void:
+	leftWallSignal.emit()
+	#newBall()
+
+func _on_warner_right_body_entered(body: Node2D) -> void:
+	rightWallSignal.emit()
+	#newBall()

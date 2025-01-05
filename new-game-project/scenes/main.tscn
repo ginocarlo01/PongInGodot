@@ -1,95 +1,107 @@
-[gd_scene load_steps=12 format=3 uid="uid://b5ifgdpvrtgm7"]
+[gd_scene load_steps=22 format=3 uid="uid://b5ifgdpvrtgm7"]
 
-[ext_resource type="PackedScene" uid="uid://dxbuubw58b33s" path="res://scenes/ball.tscn" id="1_hhvob"]
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_u8cia"]
 [ext_resource type="Texture2D" uid="uid://dwdrw05vsyn7p" path="res://art/ScoreBar.png" id="2_s7r2q"]
 [ext_resource type="Texture2D" uid="uid://qggpu2qhpvga" path="res://art/Board.png" id="3_uoxx2"]
 [ext_resource type="FontFile" uid="uid://dxw8lg2sdm1fj" path="res://fonts/Montserrat-Medium.ttf" id="4_4slri"]
 [ext_resource type="Script" path="res://scenes/point_manager.gd" id="4_auir8"]
 [ext_resource type="PackedScene" uid="uid://ioxhwy75wy02" path="res://scenes/player.tscn" id="4_vatdd"]
+[ext_resource type="PackedScene" uid="uid://cqo2r7thliwx" path="res://scenes/ball.tscn" id="5_ego0u"]
 [ext_resource type="PackedScene" uid="uid://d3osaqlo3l31x" path="res://scenes/machine.tscn" id="5_fgki7"]
 [ext_resource type="Script" path="res://scenes/in_game_ui.gd" id="5_w6ovs"]
+[ext_resource type="Script" path="res://scenes/time_manager.gd" id="6_2ni01"]
+[ext_resource type="Script" path="res://scenes/sfxManager.gd" id="11_dfy8c"]
+[ext_resource type="AudioStream" uid="uid://ch54o3ex70vcx" path="res://sfx/Death.wav" id="11_ncq2n"]
+[ext_resource type="AudioStream" uid="uid://rm4sebhcu1wr" path="res://sfx/good.mp3" id="12_jxriw"]
+[ext_resource type="AudioStream" uid="uid://nbl83ffrf4yu" path="res://sfx/Start.wav" id="14_2ckkn"]
+[ext_resource type="AudioStream" uid="uid://dgedfovwe8vsr" path="res://sfx/Open.wav" id="15_654g0"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_n1ftw"]
-size = Vector2(1156, 20)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7mfpm"]
+size = Vector2(1152, 50)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vw4w1"]
+size = Vector2(20, 648)
 
 [sub_resource type="Theme" id="Theme_o7s7m"]
 default_font = ExtResource("4_4slri")
 default_font_size = 22
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("ball", "player", "machine", "startBallPosition", "startPlayerPosition", "startMachinePosition")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xee4p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xaasd"]
+bg_color = Color(0.911326, 0.386716, 0.637585, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_07fdl"]
+bg_color = Color(0.6, 0.188235, 0.478431, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[node name="Main" type="Node2D" node_paths=PackedStringArray("ball", "player", "machine", "startBallPosition", "startPlayerPosition", "startMachinePosition", "startTimer", "counterTimer", "startLabel")]
 script = ExtResource("1_u8cia")
-ball = NodePath("Ball")
+ball = NodePath("Ball2")
 player = NodePath("Player")
 machine = NodePath("Machine")
 startBallPosition = NodePath("StartCoords/BallStart")
 startPlayerPosition = NodePath("StartCoords/PlayerStart")
 startMachinePosition = NodePath("StartCoords/MachineStart")
+startTimer = NodePath("StartGame")
+counterTimer = NodePath("TimeCounter")
+startLabel = NodePath("UI/InGameUI/time_left_start")
 
 [node name="Bg" type="Sprite2D" parent="."]
 position = Vector2(577, 326)
 scale = Vector2(1.68, 1.68)
 texture = ExtResource("3_uoxx2")
 
-[node name="Ball" parent="." instance=ExtResource("1_hhvob")]
-position = Vector2(492, 224)
-speed = 400
-possibleDirections = [Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]
-
-[node name="Player" parent="." instance=ExtResource("4_vatdd")]
+[node name="Player" parent="." groups=["Player"] instance=ExtResource("4_vatdd")]
 position = Vector2(100, 324)
-speed = 250
-
-[node name="Machine" parent="." node_paths=PackedStringArray("ball") instance=ExtResource("5_fgki7")]
+collision_layer = 4
 speed = 400
-ball = NodePath("../Ball")
+
+[node name="Machine" parent="." node_paths=PackedStringArray("ball") groups=["Machine"] instance=ExtResource("5_fgki7")]
+collision_layer = 8
+speed = 300
+ball = NodePath("../Ball2")
+
+[node name="Ball2" parent="." instance=ExtResource("5_ego0u")]
+position = Vector2(615, 288)
+collision_mask = 14
+speed = 400
 
 [node name="Walls" type="Node2D" parent="."]
-position = Vector2(1194, 692)
+position = Vector2(576, 0)
 rotation = 3.14159
-scale = Vector2(0.0333658, -32.9155)
 
-[node name="UpWall" type="Area2D" parent="Walls"]
-position = Vector2(35755.2, -20.9932)
-rotation = 3.14159
-scale = Vector2(29.9708, -0.0303809)
+[node name="Borders" type="StaticBody2D" parent="Walls" groups=["Wall"]]
 collision_layer = 2
-monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/UpWall"]
-position = Vector2(577, 35.0497)
-shape = SubResource("RectangleShape2D_n1ftw")
+[node name="Top" type="CollisionShape2D" parent="Walls/Borders"]
+position = Vector2(0, -23.5)
+shape = SubResource("RectangleShape2D_7mfpm")
 
-[node name="DownWall" type="Area2D" parent="Walls"]
-position = Vector2(35755.2, -0.698759)
-rotation = 3.14159
-scale = Vector2(29.9708, -0.0303809)
+[node name="Down" type="CollisionShape2D" parent="Walls/Borders"]
+position = Vector2(0.00199986, -673.145)
+shape = SubResource("RectangleShape2D_7mfpm")
+
+[node name="WarnerLeft" type="Area2D" parent="Walls"]
 collision_layer = 2
-monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/DownWall"]
-position = Vector2(577, -11)
-shape = SubResource("RectangleShape2D_n1ftw")
+[node name="Left" type="CollisionShape2D" parent="Walls/WarnerLeft"]
+position = Vector2(587.001, -363.999)
+shape = SubResource("RectangleShape2D_vw4w1")
 
-[node name="LeftWall" type="Area2D" parent="Walls"]
-position = Vector2(35785.2, 0)
-scale = Vector2(1, 1)
+[node name="WarnerRight" type="Area2D" parent="Walls"]
 collision_layer = 2
-monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall"]
-position = Vector2(577, -11)
-shape = SubResource("RectangleShape2D_n1ftw")
-
-[node name="RightWall" type="Area2D" parent="Walls"]
-position = Vector2(89.9088, 7.96761e-09)
-scale = Vector2(1, 1)
-collision_layer = 2
-monitorable = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall"]
-position = Vector2(577, -11)
-shape = SubResource("RectangleShape2D_n1ftw")
+[node name="Right" type="CollisionShape2D" parent="Walls/WarnerRight"]
+position = Vector2(-586.999, -364.001)
+shape = SubResource("RectangleShape2D_vw4w1")
 
 [node name="StartCoords" type="Node2D" parent="."]
 
@@ -101,6 +113,11 @@ position = Vector2(100, 324)
 
 [node name="MachineStart" type="Marker2D" parent="StartCoords"]
 position = Vector2(1052, 324)
+
+[node name="TimeManager" type="Node2D" parent="." node_paths=PackedStringArray("timeLabel")]
+position = Vector2(583, 0)
+script = ExtResource("6_2ni01")
+timeLabel = NodePath("../UI/InGameUI/time_passed")
 
 [node name="PointManager" type="Node2D" parent="."]
 position = Vector2(583, 0)
@@ -115,13 +132,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_o7s7m")
 
-[node name="InGameUI" type="Control" parent="UI" node_paths=PackedStringArray("playerPoints", "machinePoints")]
+[node name="InGameUI" type="Control" parent="UI" node_paths=PackedStringArray("playerPoints", "machinePoints", "startLabel", "startTimer")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("5_w6ovs")
 playerPoints = NodePath("playerPoints")
 machinePoints = NodePath("machinePoints")
+startLabel = NodePath("time_left_start")
+startTimer = NodePath("../../StartGame")
 
 [node name="BgPoints1" type="TextureRect" parent="UI/InGameUI"]
 layout_mode = 0
@@ -147,6 +166,41 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 50
 text = "0"
 
+[node name="time_left_start" type="Label" parent="UI/InGameUI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 537.0
+offset_top = 200.0
+offset_right = 577.0
+offset_bottom = 262.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "0
+"
+horizontal_alignment = 1
+
+[node name="time_passed" type="Label" parent="UI/InGameUI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 537.0
+offset_top = -29.0
+offset_right = 577.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "00:00"
+horizontal_alignment = 1
+
 [node name="machinePoints" type="Label" parent="UI/InGameUI"]
 layout_mode = 0
 offset_left = 747.0
@@ -157,11 +211,205 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 50
 text = "0"
 
-[connection signal="leftWallSignal" from="Ball" to="PointManager" method="_on_ball_left_wall_signal"]
-[connection signal="body_entered" from="Player" to="Ball" method="_on_player_body_entered"]
-[connection signal="body_entered" from="Machine" to="Ball" method="_on_machine_body_entered"]
-[connection signal="body_entered" from="Walls/UpWall" to="Ball" method="_on_up_wall_body_entered"]
-[connection signal="body_entered" from="Walls/DownWall" to="Ball" method="_on_down_wall_body_entered"]
-[connection signal="body_entered" from="Walls/LeftWall" to="Ball" method="_on_left_wall_body_entered"]
-[connection signal="body_entered" from="Walls/RightWall" to="Ball" method="_on_right_wall_body_entered"]
+[node name="MarginContainer" type="MarginContainer" parent="UI"]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("3_uoxx2")
+
+[node name="Title" type="VBoxContainer" parent="UI/MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 60
+
+[node name="Control" type="Control" parent="UI/MarginContainer/Title"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/MarginContainer/Title"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 90
+text = "Pong
+"
+
+[node name="ModeLabel" type="VBoxContainer" parent="UI/MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 60
+
+[node name="Control" type="Control" parent="UI/MarginContainer/ModeLabel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/MarginContainer/ModeLabel"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 90
+text = "Mode
+"
+
+[node name="DifficultyLabel" type="VBoxContainer" parent="UI/MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 30
+
+[node name="Control" type="Control" parent="UI/MarginContainer/DifficultyLabel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/MarginContainer/DifficultyLabel"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 90
+text = "Mode
+"
+
+[node name="Rounds" type="VBoxContainer" parent="UI/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 95
+
+[node name="Control" type="Control" parent="UI/MarginContainer/Rounds"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/MarginContainer/Rounds"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 90
+text = "Rounds"
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/Rounds"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xee4p")
+
+[node name="LineEdit" type="LineEdit" parent="UI/MarginContainer/Rounds/PanelContainer"]
+layout_mode = 2
+placeholder_text = "Enter the number of rounds"
+alignment = 1
+
+[node name="Buttons" type="VBoxContainer" parent="UI/MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="Button" type="Button" parent="UI/MarginContainer/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = "Play"
+
+[node name="Button2" type="Button" parent="UI/MarginContainer/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = "Quit
+"
+
+[node name="Mode2" type="VBoxContainer" parent="UI/MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="1Player" type="Button" parent="UI/MarginContainer/Mode2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = " 1 Player"
+
+[node name="2Players" type="Button" parent="UI/MarginContainer/Mode2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = " 2 Players"
+
+[node name="Difficulty" type="VBoxContainer" parent="UI/MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="Easy" type="Button" parent="UI/MarginContainer/Difficulty"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = "Easy"
+
+[node name="Normal" type="Button" parent="UI/MarginContainer/Difficulty"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = "Normal"
+
+[node name="Hard" type="Button" parent="UI/MarginContainer/Difficulty"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 70
+theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
+text = " Hard"
+
+[node name="TimeCounter" type="Timer" parent="."]
+
+[node name="StartGame" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[node name="SFX" type="Node2D" parent="."]
+position = Vector2(100, 324)
+script = ExtResource("11_dfy8c")
+
+[node name="Death" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("11_ncq2n")
+
+[node name="Victory" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("12_jxriw")
+
+[node name="Start" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("14_2ckkn")
+
+[node name="Hit" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("15_654g0")
+
+[connection signal="leftWallSignal" from="Ball2" to="." method="_on_ball_2_left_wall_signal"]
+[connection signal="leftWallSignal" from="Ball2" to="PointManager" method="_on_ball_2_left_wall_signal"]
+[connection signal="leftWallSignal" from="Ball2" to="UI/InGameUI" method="_on_ball_2_left_wall_signal"]
+[connection signal="rightWallSignal" from="Ball2" to="." method="_on_ball_2_right_wall_signal"]
+[connection signal="rightWallSignal" from="Ball2" to="PointManager" method="_on_ball_2_right_wall_signal"]
+[connection signal="body_entered" from="Walls/WarnerLeft" to="Ball2" method="_on_warner_left_body_entered"]
+[connection signal="body_entered" from="Walls/WarnerRight" to="Ball2" method="_on_warner_right_body_entered"]
 [connection signal="pointChanged" from="PointManager" to="UI/InGameUI" method="_on_point_manager_point_changed"]
+[connection signal="timeout" from="TimeCounter" to="TimeManager" method="_on_time_counter_timeout"]
+[connection signal="timeout" from="StartGame" to="." method="_on_start_game_timeout"]
+[connection signal="timeout" from="StartGame" to="UI/InGameUI" method="_on_start_game_timeout"]
