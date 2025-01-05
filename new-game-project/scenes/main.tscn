@@ -1,0 +1,167 @@
+[gd_scene load_steps=12 format=3 uid="uid://b5ifgdpvrtgm7"]
+
+[ext_resource type="PackedScene" uid="uid://dxbuubw58b33s" path="res://scenes/ball.tscn" id="1_hhvob"]
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_u8cia"]
+[ext_resource type="Texture2D" uid="uid://dwdrw05vsyn7p" path="res://art/ScoreBar.png" id="2_s7r2q"]
+[ext_resource type="Texture2D" uid="uid://qggpu2qhpvga" path="res://art/Board.png" id="3_uoxx2"]
+[ext_resource type="FontFile" uid="uid://dxw8lg2sdm1fj" path="res://fonts/Montserrat-Medium.ttf" id="4_4slri"]
+[ext_resource type="Script" path="res://scenes/point_manager.gd" id="4_auir8"]
+[ext_resource type="PackedScene" uid="uid://ioxhwy75wy02" path="res://scenes/player.tscn" id="4_vatdd"]
+[ext_resource type="PackedScene" uid="uid://d3osaqlo3l31x" path="res://scenes/machine.tscn" id="5_fgki7"]
+[ext_resource type="Script" path="res://scenes/in_game_ui.gd" id="5_w6ovs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n1ftw"]
+size = Vector2(1156, 20)
+
+[sub_resource type="Theme" id="Theme_o7s7m"]
+default_font = ExtResource("4_4slri")
+default_font_size = 22
+
+[node name="Main" type="Node2D" node_paths=PackedStringArray("ball", "player", "machine", "startBallPosition", "startPlayerPosition", "startMachinePosition")]
+script = ExtResource("1_u8cia")
+ball = NodePath("Ball")
+player = NodePath("Player")
+machine = NodePath("Machine")
+startBallPosition = NodePath("StartCoords/BallStart")
+startPlayerPosition = NodePath("StartCoords/PlayerStart")
+startMachinePosition = NodePath("StartCoords/MachineStart")
+
+[node name="Bg" type="Sprite2D" parent="."]
+position = Vector2(577, 326)
+scale = Vector2(1.68, 1.68)
+texture = ExtResource("3_uoxx2")
+
+[node name="Ball" parent="." instance=ExtResource("1_hhvob")]
+position = Vector2(492, 224)
+speed = 400
+possibleDirections = [Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]
+
+[node name="Player" parent="." instance=ExtResource("4_vatdd")]
+position = Vector2(100, 324)
+speed = 250
+
+[node name="Machine" parent="." node_paths=PackedStringArray("ball") instance=ExtResource("5_fgki7")]
+speed = 400
+ball = NodePath("../Ball")
+
+[node name="Walls" type="Node2D" parent="."]
+position = Vector2(1194, 692)
+rotation = 3.14159
+scale = Vector2(0.0333658, -32.9155)
+
+[node name="UpWall" type="Area2D" parent="Walls"]
+position = Vector2(35755.2, -20.9932)
+rotation = 3.14159
+scale = Vector2(29.9708, -0.0303809)
+collision_layer = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/UpWall"]
+position = Vector2(577, 35.0497)
+shape = SubResource("RectangleShape2D_n1ftw")
+
+[node name="DownWall" type="Area2D" parent="Walls"]
+position = Vector2(35755.2, -0.698759)
+rotation = 3.14159
+scale = Vector2(29.9708, -0.0303809)
+collision_layer = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/DownWall"]
+position = Vector2(577, -11)
+shape = SubResource("RectangleShape2D_n1ftw")
+
+[node name="LeftWall" type="Area2D" parent="Walls"]
+position = Vector2(35785.2, 0)
+scale = Vector2(1, 1)
+collision_layer = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall"]
+position = Vector2(577, -11)
+shape = SubResource("RectangleShape2D_n1ftw")
+
+[node name="RightWall" type="Area2D" parent="Walls"]
+position = Vector2(89.9088, 7.96761e-09)
+scale = Vector2(1, 1)
+collision_layer = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall"]
+position = Vector2(577, -11)
+shape = SubResource("RectangleShape2D_n1ftw")
+
+[node name="StartCoords" type="Node2D" parent="."]
+
+[node name="BallStart" type="Marker2D" parent="StartCoords"]
+position = Vector2(576, 324)
+
+[node name="PlayerStart" type="Marker2D" parent="StartCoords"]
+position = Vector2(100, 324)
+
+[node name="MachineStart" type="Marker2D" parent="StartCoords"]
+position = Vector2(1052, 324)
+
+[node name="PointManager" type="Node2D" parent="."]
+position = Vector2(583, 0)
+script = ExtResource("4_auir8")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_o7s7m")
+
+[node name="InGameUI" type="Control" parent="UI" node_paths=PackedStringArray("playerPoints", "machinePoints")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_w6ovs")
+playerPoints = NodePath("playerPoints")
+machinePoints = NodePath("machinePoints")
+
+[node name="BgPoints1" type="TextureRect" parent="UI/InGameUI"]
+layout_mode = 0
+offset_right = 470.0
+offset_bottom = 47.0
+texture = ExtResource("2_s7r2q")
+
+[node name="BgPoints2" type="TextureRect" parent="UI/InGameUI"]
+layout_mode = 0
+offset_left = 682.0
+offset_right = 1152.0
+offset_bottom = 47.0
+texture = ExtResource("2_s7r2q")
+flip_h = true
+
+[node name="playerPoints" type="Label" parent="UI/InGameUI"]
+layout_mode = 0
+offset_left = 370.0
+offset_top = -9.0
+offset_right = 410.0
+offset_bottom = 53.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 50
+text = "0"
+
+[node name="machinePoints" type="Label" parent="UI/InGameUI"]
+layout_mode = 0
+offset_left = 747.0
+offset_top = -8.0
+offset_right = 787.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 50
+text = "0"
+
+[connection signal="leftWallSignal" from="Ball" to="PointManager" method="_on_ball_left_wall_signal"]
+[connection signal="body_entered" from="Player" to="Ball" method="_on_player_body_entered"]
+[connection signal="body_entered" from="Machine" to="Ball" method="_on_machine_body_entered"]
+[connection signal="body_entered" from="Walls/UpWall" to="Ball" method="_on_up_wall_body_entered"]
+[connection signal="body_entered" from="Walls/DownWall" to="Ball" method="_on_down_wall_body_entered"]
+[connection signal="body_entered" from="Walls/LeftWall" to="Ball" method="_on_left_wall_body_entered"]
+[connection signal="body_entered" from="Walls/RightWall" to="Ball" method="_on_right_wall_body_entered"]
+[connection signal="pointChanged" from="PointManager" to="UI/InGameUI" method="_on_point_manager_point_changed"]
