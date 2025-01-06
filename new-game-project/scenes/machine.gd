@@ -1,6 +1,10 @@
 class_name Machine
 extends StaticBody2D
 
+@export var easySpeed : int
+@export var normalSpeed : int
+@export var hardSpeed : int
+
 @export var speed : int
 @export var ball : Ball
 @export var min_distance_to_ball := 10
@@ -12,10 +16,16 @@ var canMove : bool
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	object_size = $CollisionShape2D.shape.get_rect().size
-	hide()
+	
 	
 func start(pos):
 	position = pos
+	if GameParams.level == 1:
+		speed = easySpeed
+	elif GameParams.level == 2:
+		speed = normalSpeed
+	elif GameParams.level == 3:
+		speed = hardSpeed 
 	canMove = true
 	show()
 
@@ -40,7 +50,6 @@ func _physics_process(delta: float) -> void:
 		moveBy = direction * speed * delta
 	else:
 		moveBy = dist
-	
 	
 	position.y -= moveBy
 	

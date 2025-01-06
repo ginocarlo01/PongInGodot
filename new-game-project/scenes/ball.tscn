@@ -1,15 +1,24 @@
-[gd_scene load_steps=4 format=3 uid="uid://cqo2r7thliwx"]
+[gd_scene load_steps=5 format=3 uid="uid://cqo2r7thliwx"]
 
 [ext_resource type="Script" path="res://scenes/ball.gd" id="1_kf6pw"]
+[ext_resource type="Texture2D" uid="uid://dudnu1ev3yd8c" path="res://art/BallMotion.png" id="2_0gyu5"]
 [ext_resource type="Texture2D" uid="uid://dskewofm6fnlr" path="res://art/Ball.png" id="2_vij78"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ei6s2"]
 radius = 22.0907
 
-[node name="Ball" type="CharacterBody2D"]
+[node name="Ball" type="CharacterBody2D" node_paths=PackedStringArray("pivotSprite")]
 collision_mask = 2
 script = ExtResource("1_kf6pw")
 possibleDirections = [Vector2(1, 1), Vector2(-1, 1), Vector2(1, -1), Vector2(-1, -1)]
+pivotSprite = NodePath("pivot")
+
+[node name="pivot" type="Node2D" parent="."]
+
+[node name="Effect" type="Sprite2D" parent="pivot"]
+position = Vector2(-14, 0.999999)
+rotation = 0.802009
+texture = ExtResource("2_0gyu5")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_vij78")

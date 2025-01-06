@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://b5ifgdpvrtgm7"]
+[gd_scene load_steps=23 format=3 uid="uid://b5ifgdpvrtgm7"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_u8cia"]
 [ext_resource type="Texture2D" uid="uid://dwdrw05vsyn7p" path="res://art/ScoreBar.png" id="2_s7r2q"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scenes/in_game_ui.gd" id="5_w6ovs"]
 [ext_resource type="Script" path="res://scenes/time_manager.gd" id="6_2ni01"]
 [ext_resource type="Script" path="res://scenes/sfxManager.gd" id="11_dfy8c"]
+[ext_resource type="Script" path="res://scenes/start_game_ui.gd" id="11_lc26o"]
 [ext_resource type="AudioStream" uid="uid://ch54o3ex70vcx" path="res://sfx/Death.wav" id="11_ncq2n"]
 [ext_resource type="AudioStream" uid="uid://rm4sebhcu1wr" path="res://sfx/good.mp3" id="12_jxriw"]
 [ext_resource type="AudioStream" uid="uid://nbl83ffrf4yu" path="res://sfx/Start.wav" id="14_2ckkn"]
@@ -43,6 +44,7 @@ corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("ball", "player", "machine", "startBallPosition", "startPlayerPosition", "startMachinePosition", "startTimer", "counterTimer", "startLabel")]
+position = Vector2(1, 0)
 script = ExtResource("1_u8cia")
 ball = NodePath("Ball2")
 player = NodePath("Player")
@@ -66,6 +68,9 @@ speed = 400
 
 [node name="Machine" parent="." node_paths=PackedStringArray("ball") groups=["Machine"] instance=ExtResource("5_fgki7")]
 collision_layer = 8
+easySpeed = 300
+normalSpeed = 450
+hardSpeed = 600
 speed = 300
 ball = NodePath("../Ball2")
 
@@ -73,6 +78,9 @@ ball = NodePath("../Ball2")
 position = Vector2(615, 288)
 collision_mask = 14
 speed = 400
+easySpeed = 400
+normalSpeed = 600
+hardSpeed = 800
 
 [node name="Walls" type="Node2D" parent="."]
 position = Vector2(576, 0)
@@ -211,98 +219,127 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 50
 text = "0"
 
-[node name="MarginContainer" type="MarginContainer" parent="UI"]
+[node name="StartGameUI" type="MarginContainer" parent="UI" node_paths=PackedStringArray("titleCont", "modelCont", "diffCont", "roundsCont", "titleButt", "modeButt", "diffButt", "bgImage", "victCont", "victLabel", "main")]
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
+script = ExtResource("11_lc26o")
+titleCont = NodePath("Title")
+modelCont = NodePath("ModeLabel")
+diffCont = NodePath("DifficultyLabel")
+roundsCont = NodePath("Rounds")
+titleButt = NodePath("Buttons")
+modeButt = NodePath("Mode2")
+diffButt = NodePath("Difficulty")
+bgImage = NodePath("TextureRect")
+victCont = NodePath("Victory")
+victLabel = NodePath("Victory/Label")
+main = NodePath("../..")
 
-[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer"]
+[node name="TextureRect" type="TextureRect" parent="UI/StartGameUI"]
+visible = false
 layout_mode = 2
 texture = ExtResource("3_uoxx2")
 
-[node name="Title" type="VBoxContainer" parent="UI/MarginContainer"]
+[node name="Title" type="VBoxContainer" parent="UI/StartGameUI"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 60
 
-[node name="Control" type="Control" parent="UI/MarginContainer/Title"]
+[node name="Control" type="Control" parent="UI/StartGameUI/Title"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="UI/MarginContainer/Title"]
+[node name="Label" type="Label" parent="UI/StartGameUI/Title"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 90
 text = "Pong
 "
 
-[node name="ModeLabel" type="VBoxContainer" parent="UI/MarginContainer"]
+[node name="Victory" type="VBoxContainer" parent="UI/StartGameUI"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 60
+
+[node name="Control" type="Control" parent="UI/StartGameUI/Victory"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/StartGameUI/Victory"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 90
+text = "Player 1 has won!"
+
+[node name="ModeLabel" type="VBoxContainer" parent="UI/StartGameUI"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 60
 
-[node name="Control" type="Control" parent="UI/MarginContainer/ModeLabel"]
+[node name="Control" type="Control" parent="UI/StartGameUI/ModeLabel"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="UI/MarginContainer/ModeLabel"]
+[node name="Label" type="Label" parent="UI/StartGameUI/ModeLabel"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 90
 text = "Mode
 "
 
-[node name="DifficultyLabel" type="VBoxContainer" parent="UI/MarginContainer"]
+[node name="DifficultyLabel" type="VBoxContainer" parent="UI/StartGameUI"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 30
 
-[node name="Control" type="Control" parent="UI/MarginContainer/DifficultyLabel"]
+[node name="Control" type="Control" parent="UI/StartGameUI/DifficultyLabel"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="UI/MarginContainer/DifficultyLabel"]
+[node name="Label" type="Label" parent="UI/StartGameUI/DifficultyLabel"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 90
 text = "Mode
 "
 
-[node name="Rounds" type="VBoxContainer" parent="UI/MarginContainer"]
+[node name="Rounds" type="VBoxContainer" parent="UI/StartGameUI"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 theme_override_constants/separation = 95
 
-[node name="Control" type="Control" parent="UI/MarginContainer/Rounds"]
+[node name="Control" type="Control" parent="UI/StartGameUI/Rounds"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="UI/MarginContainer/Rounds"]
+[node name="Label" type="Label" parent="UI/StartGameUI/Rounds"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 90
 text = "Rounds"
 
-[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/Rounds"]
+[node name="PanelContainer" type="PanelContainer" parent="UI/StartGameUI/Rounds"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_xee4p")
 
-[node name="LineEdit" type="LineEdit" parent="UI/MarginContainer/Rounds/PanelContainer"]
+[node name="LineEdit" type="LineEdit" parent="UI/StartGameUI/Rounds/PanelContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 0
 placeholder_text = "Enter the number of rounds"
 alignment = 1
 
-[node name="Buttons" type="VBoxContainer" parent="UI/MarginContainer"]
-visible = false
+[node name="Buttons" type="VBoxContainer" parent="UI/StartGameUI"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 30
 
-[node name="Button" type="Button" parent="UI/MarginContainer/Buttons"]
+[node name="Play" type="Button" parent="UI/StartGameUI/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -311,7 +348,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
 theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
 text = "Play"
 
-[node name="Button2" type="Button" parent="UI/MarginContainer/Buttons"]
+[node name="Quit" type="Button" parent="UI/StartGameUI/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -321,14 +358,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
 text = "Quit
 "
 
-[node name="Mode2" type="VBoxContainer" parent="UI/MarginContainer"]
+[node name="Mode2" type="VBoxContainer" parent="UI/StartGameUI"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 30
 
-[node name="1Player" type="Button" parent="UI/MarginContainer/Mode2"]
+[node name="1Player" type="Button" parent="UI/StartGameUI/Mode2"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -337,7 +374,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
 theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
 text = " 1 Player"
 
-[node name="2Players" type="Button" parent="UI/MarginContainer/Mode2"]
+[node name="2Players" type="Button" parent="UI/StartGameUI/Mode2"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -346,14 +383,14 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
 theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
 text = " 2 Players"
 
-[node name="Difficulty" type="VBoxContainer" parent="UI/MarginContainer"]
+[node name="Difficulty" type="VBoxContainer" parent="UI/StartGameUI"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 30
 
-[node name="Easy" type="Button" parent="UI/MarginContainer/Difficulty"]
+[node name="Easy" type="Button" parent="UI/StartGameUI/Difficulty"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -362,7 +399,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
 theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
 text = "Easy"
 
-[node name="Normal" type="Button" parent="UI/MarginContainer/Difficulty"]
+[node name="Normal" type="Button" parent="UI/StartGameUI/Difficulty"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -371,7 +408,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_xaasd")
 theme_override_styles/normal = SubResource("StyleBoxFlat_07fdl")
 text = "Normal"
 
-[node name="Hard" type="Button" parent="UI/MarginContainer/Difficulty"]
+[node name="Hard" type="Button" parent="UI/StartGameUI/Difficulty"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -386,9 +423,13 @@ text = " Hard"
 wait_time = 3.0
 one_shot = true
 
-[node name="SFX" type="Node2D" parent="."]
+[node name="SFX" type="Node2D" parent="." node_paths=PackedStringArray("deathSFX", "victorySFX", "startSFX", "hitSFX")]
 position = Vector2(100, 324)
 script = ExtResource("11_dfy8c")
+deathSFX = NodePath("Death")
+victorySFX = NodePath("Victory")
+startSFX = NodePath("Start")
+hitSFX = NodePath("Hit")
 
 [node name="Death" type="AudioStreamPlayer2D" parent="SFX"]
 stream = ExtResource("11_ncq2n")
@@ -402,14 +443,30 @@ stream = ExtResource("14_2ckkn")
 [node name="Hit" type="AudioStreamPlayer2D" parent="SFX"]
 stream = ExtResource("15_654g0")
 
+[connection signal="finished" from="." to="TimeManager" method="_on_main_finished"]
+[connection signal="finished" from="." to="UI/InGameUI" method="_on_main_finished"]
+[connection signal="finished" from="." to="UI/StartGameUI" method="_on_main_finished"]
+[connection signal="sendPointsUI" from="." to="UI/InGameUI" method="_on_main_send_points_ui"]
+[connection signal="collided" from="Ball2" to="SFX" method="_on_ball_2_collided"]
 [connection signal="leftWallSignal" from="Ball2" to="." method="_on_ball_2_left_wall_signal"]
 [connection signal="leftWallSignal" from="Ball2" to="PointManager" method="_on_ball_2_left_wall_signal"]
 [connection signal="leftWallSignal" from="Ball2" to="UI/InGameUI" method="_on_ball_2_left_wall_signal"]
+[connection signal="leftWallSignal" from="Ball2" to="SFX" method="_on_ball_2_left_wall_signal"]
 [connection signal="rightWallSignal" from="Ball2" to="." method="_on_ball_2_right_wall_signal"]
 [connection signal="rightWallSignal" from="Ball2" to="PointManager" method="_on_ball_2_right_wall_signal"]
+[connection signal="rightWallSignal" from="Ball2" to="SFX" method="_on_ball_2_right_wall_signal"]
 [connection signal="body_entered" from="Walls/WarnerLeft" to="Ball2" method="_on_warner_left_body_entered"]
 [connection signal="body_entered" from="Walls/WarnerRight" to="Ball2" method="_on_warner_right_body_entered"]
 [connection signal="pointChanged" from="PointManager" to="UI/InGameUI" method="_on_point_manager_point_changed"]
+[connection signal="text_submitted" from="UI/StartGameUI/Rounds/PanelContainer/LineEdit" to="UI/StartGameUI" method="_on_line_edit_text_submitted"]
+[connection signal="text_submitted" from="UI/StartGameUI/Rounds/PanelContainer/LineEdit" to="SFX" method="_on_line_edit_text_submitted"]
+[connection signal="pressed" from="UI/StartGameUI/Buttons/Play" to="UI/StartGameUI" method="_on_button_pressed"]
+[connection signal="pressed" from="UI/StartGameUI/Buttons/Quit" to="UI/StartGameUI" method="_on_button_2_pressed"]
+[connection signal="pressed" from="UI/StartGameUI/Mode2/1Player" to="UI/StartGameUI" method="_on_player_pressed"]
+[connection signal="pressed" from="UI/StartGameUI/Mode2/2Players" to="UI/StartGameUI" method="_on_players_pressed"]
+[connection signal="pressed" from="UI/StartGameUI/Difficulty/Easy" to="UI/StartGameUI" method="_on_easy_pressed"]
+[connection signal="pressed" from="UI/StartGameUI/Difficulty/Normal" to="UI/StartGameUI" method="_on_normal_pressed"]
+[connection signal="pressed" from="UI/StartGameUI/Difficulty/Hard" to="UI/StartGameUI" method="_on_hard_pressed"]
 [connection signal="timeout" from="TimeCounter" to="TimeManager" method="_on_time_counter_timeout"]
 [connection signal="timeout" from="StartGame" to="." method="_on_start_game_timeout"]
 [connection signal="timeout" from="StartGame" to="UI/InGameUI" method="_on_start_game_timeout"]

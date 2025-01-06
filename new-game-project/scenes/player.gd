@@ -12,7 +12,7 @@ func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	
 	object_size = $CollisionShape2D.shape.get_rect().size
-	hide()
+	
 	
 func start(pos):
 	position = pos

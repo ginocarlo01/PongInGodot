@@ -5,3 +5,4 @@
 [node name="BgSFX" type="AudioStreamPlayer2D"]
 stream = ExtResource("1_nkymo")
 autoplay = true
+parameters/looping = true

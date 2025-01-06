@@ -9,3 +9,7 @@ func _ready() -> void:
 func _on_time_counter_timeout() -> void:
 	timePassed += 1
 	timeLabel.text = str(floor(timePassed / 60)).pad_zeros(2) + ":" + str(timePassed % 60).pad_zeros(2)
+
+func _on_main_finished(player: bool, machine: bool) -> void:
+	timePassed = 0
+	timeLabel.text = str(floor(timePassed / 60)).pad_zeros(2) + ":" + str(timePassed % 60).pad_zeros(2)
