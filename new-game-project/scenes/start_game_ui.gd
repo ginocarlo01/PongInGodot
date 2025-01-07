@@ -42,7 +42,7 @@ func _on_button_2_pressed() -> void:
 func _on_player_pressed() -> void:
 	modelCont.hide()
 	modeButt.hide()
-	
+	GameParams.qtyPlayer = 1
 	
 	diffCont.show()
 	diffButt.show()
@@ -50,7 +50,11 @@ func _on_player_pressed() -> void:
 func _on_players_pressed() -> void:
 	modelCont.hide()
 	modeButt.hide()
-
+	
+	GameParams.qtyPlayer = 2
+	GameParams.level = 1
+	
+	roundsCont.show()
 
 
 func _on_easy_pressed() -> void:

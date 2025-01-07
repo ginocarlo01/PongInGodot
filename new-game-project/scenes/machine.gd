@@ -8,7 +8,9 @@ extends StaticBody2D
 @export var speed : int
 @export var ball : Ball
 @export var min_distance_to_ball := 10
+
 var screen_size
+@export var menu_up_height := 47
 var object_size
 var direction : int
 var canMove : bool
@@ -53,5 +55,5 @@ func _physics_process(delta: float) -> void:
 	
 	position.y -= moveBy
 	
-	position = position.clamp(Vector2.ZERO + Vector2(0, 47) + object_size/2, screen_size - object_size/2)
+	position = position.clamp(Vector2.ZERO + Vector2(0, menu_up_height) + object_size/2, screen_size - object_size/2)
 	

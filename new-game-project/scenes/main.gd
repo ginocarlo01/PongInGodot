@@ -8,6 +8,9 @@ signal sendPointsUI(player : int, machine :  int)
 @export var player : Player
 @export var machine : Machine
 
+#testing p2
+@export var player2 : Player
+
 @export var startBallPosition : Marker2D
 @export var startPlayerPosition : Marker2D
 @export var startMachinePosition : Marker2D
@@ -21,12 +24,23 @@ var roundsCounter : int = 0
 var playerCounter : int = 0
 var machineCounter : int = 0
 
-func _ready() -> void:
-	ball.position = startBallPosition.position
-	player.position = startPlayerPosition.position
-	machine.position = startMachinePosition.position
+var qtyPlayer := 0
 
 func startTheGame():
+	
+	qtyPlayer = GameParams.qtyPlayer
+	print(qtyPlayer)
+	ball.position = startBallPosition.position
+	player.position = startPlayerPosition.position
+	if qtyPlayer == 1:
+		machine.position = startMachinePosition.position
+		player2.position = Vector2(1000,1000)
+	else:
+		player2.position = startMachinePosition.position
+		machine.position = Vector2(1000,1000)
+	
+	#testing p2
+
 	startTimer.start()
 	startLabel.show()
 	
@@ -39,7 +53,12 @@ func _on_start_game_timeout() -> void:
 	setAllObjects(true)
 	ball.start(startBallPosition.position)
 	player.start(startPlayerPosition.position)
-	machine.start(startMachinePosition.position)
+	if qtyPlayer == 1:
+		machine.start(startMachinePosition.position)
+	#testing p2
+	else:
+		player2.start(startMachinePosition.position)
+	
 	if counterTimer.is_stopped():
 		counterTimer.start()
 
@@ -53,8 +72,12 @@ func stopGame(playerWon : bool):
 	roundsCounter+=1
 	ball.position = startBallPosition.position
 	player.position = startPlayerPosition.position
-	machine.position = startMachinePosition.position
-	
+	if qtyPlayer == 1:
+		machine.position = startMachinePosition.position
+	#testing p2
+	else:
+		player2.position = startMachinePosition.position
+		
 	if playerWon:
 		playerCounter+=1
 	else:
@@ -85,8 +108,13 @@ func checkGameOver():
 func setAllObjects(value : bool):
 	player.set_process(value)
 	player.set_physics_process(value)
-	machine.set_process(value)
-	machine.set_physics_process(value)
+	if qtyPlayer == 1:
+		machine.set_process(value)
+		machine.set_physics_process(value)
+	#testing p2
+	else:
+		player2.set_process(value)
+		player2.set_physics_process(value)
 	ball.position = startBallPosition.position
 	ball.set_process(value)
 	ball.set_physics_process(value)

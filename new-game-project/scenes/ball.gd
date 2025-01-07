@@ -50,9 +50,10 @@ func newBall():
 func randomSpeed():
 	if possibleDirections.size() == 0:
 		assert(false, "No possible directions")
+		
 	direction = possibleDirections[randi() % possibleDirections.size()]
-	
 	direction.normalized()
+	
 	pivotSprite.rotation = Vector2(1,0).angle_to(direction)
 	pivotSprite.show()
 
@@ -86,7 +87,7 @@ func new_direction(collider):
 	else:
 		newDir.x = 1
 		
-	newDir.y = (dist / (collider.object_size.y / 2)) * MAX_Y_VECTOR * 1.2
+	newDir.y = (dist / (collider.object_size.y / 2)) * MAX_Y_VECTOR 
 	
 	return newDir.normalized()
 

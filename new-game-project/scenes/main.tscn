@@ -1,13 +1,15 @@
-[gd_scene load_steps=23 format=3 uid="uid://b5ifgdpvrtgm7"]
+[gd_scene load_steps=25 format=3 uid="uid://b5ifgdpvrtgm7"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_u8cia"]
 [ext_resource type="Texture2D" uid="uid://dwdrw05vsyn7p" path="res://art/ScoreBar.png" id="2_s7r2q"]
 [ext_resource type="Texture2D" uid="uid://qggpu2qhpvga" path="res://art/Board.png" id="3_uoxx2"]
 [ext_resource type="FontFile" uid="uid://dxw8lg2sdm1fj" path="res://fonts/Montserrat-Medium.ttf" id="4_4slri"]
 [ext_resource type="Script" path="res://scenes/point_manager.gd" id="4_auir8"]
+[ext_resource type="Texture2D" uid="uid://dfraxfd4ay5s1" path="res://art/Player.png" id="4_hgcq5"]
 [ext_resource type="PackedScene" uid="uid://ioxhwy75wy02" path="res://scenes/player.tscn" id="4_vatdd"]
 [ext_resource type="PackedScene" uid="uid://cqo2r7thliwx" path="res://scenes/ball.tscn" id="5_ego0u"]
 [ext_resource type="PackedScene" uid="uid://d3osaqlo3l31x" path="res://scenes/machine.tscn" id="5_fgki7"]
+[ext_resource type="Texture2D" uid="uid://dbybprhc4cl3e" path="res://art/Computer.png" id="5_j0p1a"]
 [ext_resource type="Script" path="res://scenes/in_game_ui.gd" id="5_w6ovs"]
 [ext_resource type="Script" path="res://scenes/time_manager.gd" id="6_2ni01"]
 [ext_resource type="Script" path="res://scenes/sfxManager.gd" id="11_dfy8c"]
@@ -43,12 +45,13 @@ corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("ball", "player", "machine", "startBallPosition", "startPlayerPosition", "startMachinePosition", "startTimer", "counterTimer", "startLabel")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("ball", "player", "machine", "player2", "startBallPosition", "startPlayerPosition", "startMachinePosition", "startTimer", "counterTimer", "startLabel")]
 position = Vector2(1, 0)
 script = ExtResource("1_u8cia")
 ball = NodePath("Ball2")
 player = NodePath("Player")
 machine = NodePath("Machine")
+player2 = NodePath("Player2")
 startBallPosition = NodePath("StartCoords/BallStart")
 startPlayerPosition = NodePath("StartCoords/PlayerStart")
 startMachinePosition = NodePath("StartCoords/MachineStart")
@@ -61,12 +64,24 @@ position = Vector2(577, 326)
 scale = Vector2(1.68, 1.68)
 texture = ExtResource("3_uoxx2")
 
-[node name="Player" parent="." groups=["Player"] instance=ExtResource("4_vatdd")]
+[node name="Player" parent="." node_paths=PackedStringArray("sprite") groups=["Player"] instance=ExtResource("4_vatdd")]
 position = Vector2(100, 324)
 collision_layer = 4
 speed = 400
+player_n = 1
+look_of_player = ExtResource("4_hgcq5")
+sprite = NodePath("Sprite2D")
+
+[node name="Player2" parent="." node_paths=PackedStringArray("sprite") groups=["Player"] instance=ExtResource("4_vatdd")]
+position = Vector2(-100, 324)
+collision_layer = 4
+speed = 400
+player_n = 2
+look_of_player = ExtResource("5_j0p1a")
+sprite = NodePath("Sprite2D")
 
 [node name="Machine" parent="." node_paths=PackedStringArray("ball") groups=["Machine"] instance=ExtResource("5_fgki7")]
+position = Vector2(-109, -84)
 collision_layer = 8
 easySpeed = 300
 normalSpeed = 450
@@ -237,7 +252,6 @@ victLabel = NodePath("Victory/Label")
 main = NodePath("../..")
 
 [node name="TextureRect" type="TextureRect" parent="UI/StartGameUI"]
-visible = false
 layout_mode = 2
 texture = ExtResource("3_uoxx2")
 
@@ -259,6 +273,7 @@ text = "Pong
 "
 
 [node name="Victory" type="VBoxContainer" parent="UI/StartGameUI"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -308,7 +323,6 @@ text = "Mode
 "
 
 [node name="Rounds" type="VBoxContainer" parent="UI/StartGameUI"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -333,7 +347,14 @@ theme_override_font_sizes/font_size = 0
 placeholder_text = "Enter the number of rounds"
 alignment = 1
 
+[node name="Orientation" type="Label" parent="UI/StartGameUI/Rounds"]
+layout_mode = 2
+text = "W and S for Player 1 on the left
+UP and DOWN for Player 2 on the right"
+horizontal_alignment = 1
+
 [node name="Buttons" type="VBoxContainer" parent="UI/StartGameUI"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -470,3 +491,6 @@ stream = ExtResource("15_654g0")
 [connection signal="timeout" from="TimeCounter" to="TimeManager" method="_on_time_counter_timeout"]
 [connection signal="timeout" from="StartGame" to="." method="_on_start_game_timeout"]
 [connection signal="timeout" from="StartGame" to="UI/InGameUI" method="_on_start_game_timeout"]
+
+[editable path="Player"]
+[editable path="Player2"]
