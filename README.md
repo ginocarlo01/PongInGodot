@@ -10,8 +10,7 @@ There are 2 PDFs documents that explain the physics of the game
 
 
 ## 🎵 Sound Effects  
-Sound effects sourced from: **JDSherbert**
-Sound Effect by freesound_community from Pixabay
+Sound effects sourced from: **JDSherbert** and freesound_community from Pixabay
 
 ## Art 
 Assets from: https://github.com/myebstudios
